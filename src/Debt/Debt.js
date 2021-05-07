@@ -10,48 +10,65 @@ import {ElectroIcon} from "../ElectroIcon";
 import {WaterIcon} from "../WaterIcon";
 import {NoDebtIcon} from "../NoDebtIcon";
 
-export function Debt() {
-    let gas_debt = 0;
-    let water_debt = 0;
-    let electro_debt = 0;
-    let content = (
-        <div>
-            <Card title="Задолженности">
-                <DebtIcon height={50} width={50}/>
-            </Card>
-            <table>
-                <tr>
-                    <th></th>
-                    <th>Услуга</th>
-                    <th>Задолженность</th>
-                    <th>Картиночка</th>
-                </tr>
-                <tr>
-                    <td><GasIcon/></td>
-                    <td>Газоснабжение</td>
-                    <td> {gas_debt}</td>
-                    <td><ExistDebtIcon/></td>
+export class Debt extends React.Component {
+    state = {
+        gas_debt: 0,
+        water_debt: 0,
+        electro_debt: 0,
+    }
 
-                </tr>
-                <tr>
-                    <td><ElectroIcon/></td>
-                    <td>Электричество</td>
-                    <td> {electro_debt}</td>
-                    <td><NoDebtIcon/></td>
-                </tr>
-                <tr>
-                    <td><WaterIcon/></td>
-                    <td>Вода</td>
-                    <td> {water_debt}</td>
-                    <td><NoDebtIcon/></td>
-                </tr>
-            </table>
+    render() {
+        let content = (
+            <div>
+                <Card title="Задолженности">
+                    <DebtIcon height={50} width={50}/>
+                </Card>
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Услуга</th>
+                        <th>Задолженность</th>
+                        <th>Картиночка</th>
+                    </tr>
+                    <tr>
+                        <td><GasIcon/></td>
+                        <td>Газоснабжение</td>
+                        <td> {this.state.gas_debt}</td>
+                        <td>{this.state.gas_debt > 0 ? <DebtIcon/> : <NoDebtIcon/>}</td>
 
-        </div>
-    )
-    return (
-        <Page isLoggedIn={true}>
-            {content}
-        </Page>
-    );
+                    </tr>
+                    <tr>
+                        <td><ElectroIcon/></td>
+                        <td>Электричество</td>
+                        <td> {this.state.electro_debt}</td>
+                        <td>{this.state.electro_debt > 0 ? <DebtIcon/> : <NoDebtIcon/>}</td>
+                    </tr>
+                    <tr>
+                        <td><WaterIcon/></td>
+                        <td>Вода</td>
+                        <td> {this.state.water_debt}</td>
+                        <td>{this.state.water_debt > 0 ? <DebtIcon/> : <NoDebtIcon/>}</td>
+                    </tr>
+                </table>
+
+            </div>
+        )
+        return (
+            <Page isLoggedIn={true}>
+                {content}
+            </Page>
+        );
+
+    }
+    async getData() {
+        const currPath = 'http://21f340c28901.ngrok.io/'
+        const r = await (await fetch(currPath + 'api/v1/info/user/debt')).json();
+        console.log(r);
+        this.setState({
+            gas_debt: r.gas_debt,
+            water_debt: r.water_debt,
+            electro_debt: r.electro_debt,
+        });
+    }
+
 }
