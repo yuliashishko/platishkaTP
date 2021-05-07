@@ -6,7 +6,23 @@ import React from "react";
 
 export class History extends React.Component {
     state = {
-        payHistory: [],
+        payHistory: [
+            {
+                    'service': 'Газ',
+                    'date': '20.03.2021',
+                    'sum': '2000р',
+                },
+                {
+                    'service': 'Вода',
+                    'date': '20.03.2021',
+                    'sum': '2000р',
+                },
+                {
+                    'service': 'Электричество',
+                    'date': '20.03.2021',
+                    'sum': '2000р',
+                }
+        ],
     }
     constructor() {
         super();
@@ -48,7 +64,7 @@ export class History extends React.Component {
 
                     {this.state.payHistory.map(item => (
                         <tr>
-                            <td>{item.type}</td>
+                            <td>{item.service}</td>
                             <td>{item.date}</td>
                             <td>{item.sum}</td>
                         </tr>

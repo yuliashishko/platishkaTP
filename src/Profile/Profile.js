@@ -79,12 +79,12 @@ export class Profile extends React.Component {
         console.log(r);
         this.setState({
             address: r.address,
-            gas_number: r.gas_number,
-            gas_firm: r.gas_firm,
-            water_firm: r.water_firm,
-            water_number: r.water_number,
-            electro_number: r.electro_number,
-            electro_firm: r.electro_firm,
+            gas_number: r.gasPersonalCode,
+            gas_firm: r.gasExecutor,
+            water_firm: r.waterExecutor,
+            water_number: r.waterPersonalCode,
+            electro_number: r.electPersonalCode,
+            electro_firm: r.electExecuto,
         });
     }
 

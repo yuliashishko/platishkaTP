@@ -65,9 +65,9 @@ export class Debt extends React.Component {
         const r = await (await fetch(currPath + 'api/v1/info/user/debt')).json();
         console.log(r);
         this.setState({
-            gas_debt: r.gas_debt,
-            water_debt: r.water_debt,
-            electro_debt: r.electro_debt,
+            gas_debt: r.gasDebt,
+            water_debt: r.waterDebt,
+            electro_debt: r.electDebt,
         });
     }
 

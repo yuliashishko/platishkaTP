@@ -6,9 +6,9 @@ import {WaterIcon} from "../WaterIcon";
 import React from 'react';
 export class TarifPage extends React.Component {
     state = {
-        curr_gas: 0,
-        curr_electro: 0,
-        curr_water: 0,
+        curr_gas: 200,
+        curr_electro: 300,
+        curr_water: 100,
     }
 
     constructor() {

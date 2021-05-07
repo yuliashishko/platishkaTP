@@ -2,24 +2,33 @@ import {Page} from "../Page/Page";
 import {Button} from "../Button/Button";
 import s from './Users.module.css'
 import React from "react";
+import {Modal} from "../Modal/Modal";
 
 export class Users extends React.Component {
     state = {
         users: [
             {
-                    "name": "Иванов Иван Иваныч",
-                    "login": "ivan2000",
-                    "apartmentId": "2",
-                },
-                {
-                    "name": "Иванов Петр Иваныч",
-                    "login": "petr2000",
-                    "apartmentId": "3",
-                }
+                "id": "1",
+                "name": "Иванов Иван Иваныч",
+                "login": "ivan2000",
+                "apartmentId": "2",
+            },
+            {
+                "id": "2",
+                "name": "Иванов Петр Иваныч",
+                "login": "petr2000",
+                "apartmentId": "3",
+            }
         ],
-    }
+        showModalEdit: false,
+        showModalAdd: false,
+        currUser: {
+            id: "",
+            name: "",
+        },
+    };
 
-    constructor() {
+    constructor(func) {
         super();
         this.getData();
     }
@@ -32,7 +41,7 @@ export class Users extends React.Component {
             <div>
                 <label>Пользователи</label>
                 <br/>
-                <button>Добавить</button>
+                <button onClick={this.props.onClickModal("createUser", null)}>Добавить</button>
                 <table className={s.table}>
                     <thead>
                     <th>ФИО</th>
@@ -49,7 +58,7 @@ export class Users extends React.Component {
                             <td>{item.login}</td>
                             <td>{item.apartmentId}</td>
                             <td>
-                                <button>Изменить</button>
+                                <button onClick={this.props.onClickModal("editUser", item)}>Изменить</button>
                             </td>
                             <td><Button text="Удалить" color="red"/></td>
                             <td>
@@ -61,12 +70,22 @@ export class Users extends React.Component {
                 </table>
             </div>
         )
+        if (this.state.showModal) {
+
+        }
         return (
-            <Page>
+            <Page onClickModal={this.openModal}>
                 {content}
             </Page>
         );
-    }
+    };
+
+    openModal = (type, editItem) => {
+        this.setState({
+            modalType: type,
+            edit: editItem,
+        })
+    };
 
     async getData() {
         const currPath = 'http://21f340c28901.ngrok.io/'
@@ -75,5 +94,6 @@ export class Users extends React.Component {
         this.setState({
             users: r,
         });
-    }
+    };
+
 }
