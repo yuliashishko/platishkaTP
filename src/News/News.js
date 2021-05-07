@@ -1,7 +1,6 @@
 import {Page} from "../Page/Page";
 import s from './News.module.css';
 import React from 'react';
-import {Button} from "../Button/Button";
 
 
 export class News extends React.Component {

@@ -14,7 +14,13 @@ import {TarifIcon} from "./TarifIcon";
 import {TarifPage} from "./TarifPage/TarifPage";
 import {ApartmentCrud} from "./ApartmentCRUD/ApartmentCrud";
 import {AddInfo} from "./AddInfo/AddInfo";
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
+
+cookies.set('isLoggedIn', false);
+
+console.log(cookies.get('myCat'));
 function App() {
     return (
         <BrowserRouter>
