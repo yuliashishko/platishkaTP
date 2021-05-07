@@ -41,7 +41,7 @@ export class Users extends React.Component {
             <div>
                 <label>Пользователи</label>
                 <br/>
-                <button onClick={this.props.onClickModal("createUser", null)}>Добавить</button>
+                <button>Добавить</button>
                 <table className={s.table}>
                     <thead>
                     <th>ФИО</th>
@@ -58,7 +58,7 @@ export class Users extends React.Component {
                             <td>{item.login}</td>
                             <td>{item.apartmentId}</td>
                             <td>
-                                <button onClick={this.props.onClickModal("editUser", item)}>Изменить</button>
+                                <button>Изменить</button>
                             </td>
                             <td><Button text="Удалить" color="red"/></td>
                             <td>
@@ -74,7 +74,7 @@ export class Users extends React.Component {
 
         }
         return (
-            <Page onClickModal={this.openModal}>
+            <Page>
                 {content}
             </Page>
         );
