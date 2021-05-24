@@ -48,7 +48,7 @@ export class AddInfo extends React.Component {
     }
 
     async getData() {
-        const r = await (await fetch('http://34e583d93f48.ngrok.io/api/v1/info/all')).json();
+        const r = await (await fetch('http://0576a7c0379e.ngrok.io/api/v1/info/all')).json();
         console.log(r);
         this.setState({
             [r[0].name]:r[0].text,
@@ -63,8 +63,7 @@ export class AddInfo extends React.Component {
             name: this.state.chapter,
             text: this.state[this.state.chapter],
         }
-        const currPath = 'http://34e583d93f48.ngrok.io/'
-        fetch(currPath + 'api/v1/info/1', {
+        fetch('/api/v1/info/1', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
