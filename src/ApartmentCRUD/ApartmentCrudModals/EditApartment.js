@@ -30,7 +30,7 @@ export class EditApartment extends React.Component {
                 <br/>
                 <label htmlFor="electro">Электричество</label>
                 <input name="electro" type="text" value={this.state.apartment.electro}
-                       onChange={(e) => this.changeValue("gas", e.target.value)}/>
+                       onChange={(e) => this.changeValue("electro", e.target.value)}/>
 
                 <button
                     onClick={() => this.props.onSave(this.state.apartment.apartmentId, this.state.apartment)}>Сохранить
