@@ -46,7 +46,6 @@ export class Users extends React.Component {
                     <thead>
                     <th>ФИО</th>
                     <th>Логин</th>
-                    <th>id квартиры</th>
                     <th>Изменить</th>
                     <th>Удалить</th>
                     <th>Сбросить пароль</th>
@@ -56,13 +55,12 @@ export class Users extends React.Component {
                         <tr>
                             <td>{item.name}</td>
                             <td>{item.login}</td>
-                            <td>{item.apartmentId}</td>
                             <td>
                                 <button>Изменить</button>
                             </td>
                             <td><Button text="Удалить" color="red"/></td>
                             <td>
-                                <button>Сбросить пароль</button>
+                                <button onClick={() => this.resetPassword(item.id)}>Сбросить пароль</button>
                             </td>
                         </tr>
                     ))}
@@ -86,10 +84,12 @@ export class Users extends React.Component {
             edit: editItem,
         })
     };
-
+    async resetPassword (id) {
+        const r = await (await fetch('api/v1/admin/users/all')).json();
+        this.getData();
+    }
     async getData() {
-        const currPath = 'http://21f340c28901.ngrok.io/'
-        const r = await (await fetch(currPath + 'api/v1/admin/users')).json();
+        const r = await (await fetch('api/v1/admin/users/all')).json();
         console.log(r);
         this.setState({
             users: r,

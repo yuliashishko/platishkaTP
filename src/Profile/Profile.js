@@ -74,7 +74,7 @@ export class Profile extends React.Component {
     }
 
     async getData() {
-        const currPath = 'http://21f340c28901.ngrok.io/'
+        const currPath = ' http://0576a7c0379e.ngrok.io/'
         const r = await (await fetch(currPath + 'api/v1/user')).json();
         console.log(r);
         this.setState({

@@ -13,8 +13,8 @@ import {NoDebtIcon} from "../NoDebtIcon";
 export class Debt extends React.Component {
     state = {
         gas_debt: 0,
-        water_debt: 0,
-        electro_debt: 0,
+        water_debt: 2,
+        electro_debt: 1,
     }
 
     render() {
@@ -34,20 +34,20 @@ export class Debt extends React.Component {
                         <td><GasIcon/></td>
                         <td>Газоснабжение</td>
                         <td> {this.state.gas_debt}</td>
-                        <td>{this.state.gas_debt > 0 ? <DebtIcon/> : <NoDebtIcon/>}</td>
+                        <td>{this.state.gas_debt > 0 ? <ExistDebtIcon/> : <NoDebtIcon/>}</td>
 
                     </tr>
                     <tr>
                         <td><ElectroIcon/></td>
                         <td>Электричество</td>
                         <td> {this.state.electro_debt}</td>
-                        <td>{this.state.electro_debt > 0 ? <DebtIcon/> : <NoDebtIcon/>}</td>
+                        <td>{this.state.electro_debt > 0 ? <ExistDebtIcon/> : <NoDebtIcon/>}</td>
                     </tr>
                     <tr>
                         <td><WaterIcon/></td>
                         <td>Вода</td>
                         <td> {this.state.water_debt}</td>
-                        <td>{this.state.water_debt > 0 ? <DebtIcon/> : <NoDebtIcon/>}</td>
+                        <td>{this.state.water_debt > 0 ? <ExistDebtIcon/> : <NoDebtIcon/>}</td>
                     </tr>
                 </table>
 
@@ -61,8 +61,8 @@ export class Debt extends React.Component {
 
     }
     async getData() {
-        const currPath = 'http://21f340c28901.ngrok.io/'
-        const r = await (await fetch(currPath + 'api/v1/info/user/debt')).json();
+        const currPath = 'http://0576a7c0379e.ngrok.io/'
+        const r = await (await fetch(currPath + 'api/v1/user/debt')).json();
         console.log(r);
         this.setState({
             gas_debt: r.gasDebt,

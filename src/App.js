@@ -15,6 +15,7 @@ import {TarifPage} from "./TarifPage/TarifPage";
 import {ApartmentCrud} from "./ApartmentCRUD/ApartmentCrud";
 import {AddInfo} from "./AddInfo/AddInfo";
 import Cookies from 'universal-cookie';
+import {Payment} from "./Payment/Payment";
 
 const cookies = new Cookies();
 
@@ -63,6 +64,9 @@ function App() {
                 </Route>
                 <Route path="/admin/info">
                     <AddInfo/>
+                </Route>
+                <Route path="/payment">
+                    <Payment/>
                 </Route>
 
             </Switch>

@@ -32,7 +32,7 @@ export class News extends React.Component {
     }
 
     async getData() {
-        const currPath = 'http://e06b8e648d8c.ngrok.io/'
+        const currPath = ' http://0576a7c0379e.ngrok.io/'
         const r = await (await fetch(currPath + 'api/v1/info/news/7')).json();
         console.log(r);
         this.setState({
