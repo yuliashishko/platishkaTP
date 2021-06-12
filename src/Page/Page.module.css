@@ -13,6 +13,22 @@
     flex-grow: 1;
 }
 
+.msgContainer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.msg {
+    height: 30px;
+    background-color: #D14351;
+    padding: 5px;
+    border-radius: 5px;
+}
 .mainWindow {
     width: 100%;
     background-color: #F9F9F9;

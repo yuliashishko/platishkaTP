@@ -1,5 +1,64 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Page} from "../Page/Page";
+import gif from "../TryPay/giphy.gif";
+import chair from "../TryPay/chair.png";
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
+function Product({product, onSuccess}) {
+    const [paidFor, setPaidFor] = useState(false);
+    const [error, setError] = useState(null);
+    const paypalRef = useRef();
+
+    useEffect(() => {
+        window.paypal
+            .Buttons({
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [
+                            {
+                                description: product.description,
+                                amount: {
+                                    currency_code: 'RUB',
+                                    value: product.price,
+                                },
+                            },
+                        ],
+                    });
+                },
+                onApprove: async (data, actions) => {
+                    const order = await actions.order.capture();
+                    setPaidFor(true);
+                    console.log(order);
+                },
+                onError: err => {
+                    setError(err);
+                    console.error(err);
+                },
+            })
+            .render(paypalRef.current);
+    }, [product.description, product.price]);
+
+    if (paidFor) {
+        //this.onSuccess()
+        return (
+            <div>
+                <h1>Congrats, you just make {product.name}!</h1>
+                <img alt={product.description} src={gif}/>
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            {error && <div>Uh oh, an error occurred! {error.message}</div>}
+            <h1>
+                {product.name} for ${product.price}
+            </h1>
+            <img alt={product.description} width="200"/>
+            <div ref={paypalRef}/>
+        </div>
+    );
+}
 
 export class Payment extends React.Component {
     constructor(props) {
@@ -10,21 +69,14 @@ export class Payment extends React.Component {
             lastValue: -1,
             currValue: 0,
             tarif: 0,
-            cardNumber: "",
-            cardValidTo: "",
-            cardSecret: "",
             stage: 1,
-            isLoggedIn: false,
+            isLoggedIn: cookies.get('isLoggedIn'),
+            pay: null,
         }
     }
 
     render() {
         return (
-
-            // {this.state.requestSent ? (this.state.gotResponse ? <data/> : <spinner/>) : null}
-            // false, false
-            // true, false
-            // fetch().then(data => {true, true})
 
             <Page isLoggedIn={this.state.isLoggedIn} showModal={false}>
                 <div>
@@ -72,17 +124,8 @@ export class Payment extends React.Component {
                     </div>
                     <div>
                         <h3> Оплатите</h3>
-                        {this.state.stage === 4 ? <div>
-                            <label htmlFor="cardNumber">Номер карты</label>
-                            <input name="cardNumber" value={this.state.cardNumber}
-                                   onChange={(e) => this.changeValue("cardNumber", e)}/>
-                            <label htmlFor="cardValidTo">Срок</label>
-                            <input name="cardValidTo" value={this.state.cardValidTo}
-                                   onChange={(e) => this.changeValue("cardValidTo", e)}/>
-                            <label htmlFor="cardSecret">Код с обратной стороны</label>
-                            <input name="cardSecret" value={this.state.cardSecret}
-                                   onChange={(e) => this.changeValue("cardSecret", e)}/>
-                        </div> : null}
+                        {this.state.stage === 4 ?
+                            <Product product={this.state.pay} onSuccess={() => this.paymentSuccess()}/>: null}
                     </div>
                     <button onClick={() => this.nextButtonClicked()}>Далее</button>
                 </div>
@@ -95,7 +138,9 @@ export class Payment extends React.Component {
             type: type,
         });
         if (this.state.isLoggedIn) {
-            const r = await (await fetch('api/v1/payment/' + type)).json();
+            const r = await (await fetch('api/v1/payment/page_1/' + type), {
+                Authorization: `Bearer_${cookies.get('token')}`,
+            }).json();
             console.log(r);
             this.setState({
                 accountNumber: r.accountNumber,
@@ -120,16 +165,24 @@ export class Payment extends React.Component {
             })
         }
         if (curr_stage === 3) {
+
             if (this.state.tarif === 0) return;
             this.setState({
                 stage: this.state.stage + 1,
+                pay: {
+                    price: this.calcTotal(),
+                    name: 'payment for ' + this.state.type,
+                    description: 'Thank you for using us'
+                }
             })
         }
         if (curr_stage === 4) {
             //сообщить успешно/нет
         }
     }
-
+    paymentSuccess() {
+        console.log("Yeah beach");
+    }
     checkAccountNumber() {
         return this.state.accountNumber > 0 && this.state.type //check real
     }

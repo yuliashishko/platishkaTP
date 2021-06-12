@@ -1,7 +1,7 @@
 import {Page} from "../Page/Page";
 import React from "react";
-
-
+import Cookies from "universal-cookie/es6";
+let cookie = new Cookies();
 export class AddInfo extends React.Component {
     state = {
         about: null,
@@ -48,7 +48,12 @@ export class AddInfo extends React.Component {
     }
 
     async getData() {
-        const r = await (await fetch('http://0576a7c0379e.ngrok.io/api/v1/info/all')).json();
+        const r = await (await fetch("/api/v1/info/all"), {
+            headers: {
+                Authorization: `Bearer_${cookie.get('token')}`,
+                'Content-Type': 'application/json'
+            }
+        }).json();
         console.log(r);
         this.setState({
             [r[0].name]:r[0].text,
@@ -63,10 +68,12 @@ export class AddInfo extends React.Component {
             name: this.state.chapter,
             text: this.state[this.state.chapter],
         }
-        fetch('/api/v1/info/1', {
+        let auth = 'Bearer_' + cookie.get('token');
+        fetch('/api/v1/admin/info/', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
+                'Authorization': auth,
                 'Content-Type':'application/json'
             }
         });

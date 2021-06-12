@@ -13,10 +13,12 @@ import {FlatIcon} from "../FlatIcon";
 import {UsersIcon} from "../UsersIcon";
 import {InfoIcon} from "../InfoIcon";
 import {TarifIcon} from "../TarifIcon";
-
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 export function Home({loggedIn, isAdmin}) {
-    loggedIn = true;
-    isAdmin = true;
+    loggedIn = cookies.get('isLoggedIn');
+    isAdmin = cookies.get('role') === 'admin'; // get his role
+
     let content = (
         <React.Fragment className={s.straight}>
             <div className={s.title}>
@@ -45,7 +47,7 @@ export function Home({loggedIn, isAdmin}) {
             <section className={s.table}>
                 <div className={s.column}>
                     <div className={s.superLink}>
-                        <Link to="/pay">
+                        <Link to="/payment">
                             <Card title="Оплатить квитанцию">
                                 <PayCardIcon/>
                             </Card>
@@ -121,7 +123,7 @@ export function Home({loggedIn, isAdmin}) {
     }
 
     return (
-        <Page isLoggedIn={true}>
+        <Page isLoggedIn={loggedIn}>
             {content}
         </Page>
     );

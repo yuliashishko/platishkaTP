@@ -3,6 +3,9 @@ import React from "react";
 import s from "../Home/Home.module.css";
 import {Card} from "../Card/Card";
 import {ProfileIcon} from "../ProfileIcon/ProfileIcon";
+import {ChangePassword} from "./ProfileModals/ChangePassword";
+import {delay} from "../utils";
+import {TelegrammModal} from "./ProfileModals/TelegrammModal";
 
 export class Profile extends React.Component {
     constructor() {
@@ -19,6 +22,13 @@ export class Profile extends React.Component {
         water_number: '',
         electro_number: '',
         electro_firm: '',
+        modal: null,
+        user: {
+            oldPassword: '',
+            newPassword: '',
+            repeatPassword: '',
+        },
+        message: null,
     }
     // let address = 'Улица несбывшихся надежд';
     // let gas_number = '0001';
@@ -37,8 +47,8 @@ export class Profile extends React.Component {
                         <ProfileIcon height={50} width={50}/>
                     </Card>
                     <div className={s.row}>
-                        <button>Сменить пароль</button>
-                        <button>Телеграмм бот</button>
+                        <button onClick={() => this.changePassword()}>Сменить пароль</button>
+                        <button onClick={() => this.getTelegramm()}>Телеграмм бот</button>
                     </div>
                     <label>Адрес: {this.state.address}</label>
                     <table>
@@ -67,16 +77,20 @@ export class Profile extends React.Component {
             </div>
         )
         return (
-            <Page isLoggedIn={true}>
+            <Page isLoggedIn={true} showModal={this.state.modal} showMessage={this.state.message}>
                 {content}
+                {this.state.modal === "change_password" ?
+                    <ChangePassword user={this.state.user} onSave={this.onSavePassword}
+                                    onCancel={this.cancel}/> : (this.state.modal === "telegramm" ?
+                        <TelegrammModal link={this.getLink()} onCancel={this.cancel}/> : null)}
+                {this.state.message}
             </Page>
         );
     }
 
     async getData() {
-        const currPath = ' http://0576a7c0379e.ngrok.io/'
-        const r = await (await fetch(currPath + 'api/v1/user')).json();
-        console.log(r);
+        const r = await (await fetch('/api/v1/user')).json();
+        //console.log(r);
         this.setState({
             address: r.address,
             gas_number: r.gasPersonalCode,
@@ -84,9 +98,79 @@ export class Profile extends React.Component {
             water_firm: r.waterExecutor,
             water_number: r.waterPersonalCode,
             electro_number: r.electPersonalCode,
-            electro_firm: r.electExecuto,
+            electro_firm: r.electExecutor,
+        });
+    }
+    getLink = () => {
+        return "Иди в телегу"
+    }
+    changePassword = () => {
+        this.setState({
+            modal: "change_password",
+        })
+    }
+
+    getTelegramm = () => {
+        this.setState({
+            modal: "telegramm",
+        })
+    }
+    cancel = () => {
+        this.setState({
+            modal: null,
         });
     }
 
+    onSavePassword = async (user) => {
+        let data = user;
+        if (!data.newPassword) {
+            this.setState({
+                message: "Пустой пароль",
+            });
+            await delay(2000);
+            this.setState({
+                message: null,
+            });
+            return;
+        }
+        if (data.newPassword === data.repeatPassword) {
+            this.setState({
+                message: "Новый пароль полностью дублирует старый",
+            });
+            await delay(2000);
+            this.setState({
+                message: null,
+            });
+        }
+        if (data.newPassword !== data.repeatPassword) {
+            this.setState({
+                message: "Пароли не совпадают",
+            });
+            await delay(2000);
+            this.setState({
+                message: null,
+            });
+        } else {
+            let r = (await fetch('api/v1/user/change_pass', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })).json();
+            if (r.state === "success") {
+                this.setState({
+                    modal: null,
+                    message: "Пароль успешно сменен"
+                })
+                this.getData();
+            } else {
+                this.setState({
+                    message: "Старый пароль указан неверно!"
+                })
+            }
+        }
+
+    }
 
 }

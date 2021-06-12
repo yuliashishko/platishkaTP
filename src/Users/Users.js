@@ -85,7 +85,7 @@ export class Users extends React.Component {
         })
     };
     async generatePassword() {
-        const r = await (await fetch('api/v1/admin/users/all')).json();
+        const r = await (await fetch('/api/v1/admin/users/all')).json();
         return r.password;
     }
     onChangeUser = (item) => {
@@ -96,7 +96,7 @@ export class Users extends React.Component {
     }
     onSave = (user) => {
         let data = user;
-        fetch('api/v1/admin/users', {
+        fetch('/api/v1/admin/users', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -140,7 +140,7 @@ export class Users extends React.Component {
         });
     }
     async getData() {
-        const r = await (await fetch('api/v1/admin/users/all')).json();
+        const r = await (await fetch('/api/v1/admin/users/all')).json();
         console.log(r);
         this.setState({
             users: r,

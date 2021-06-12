@@ -4,7 +4,10 @@ import {Button} from "../Button/Button";
 import * as cn from "classnames";
 import {Modal} from "../Modal/Modal";
 import React from 'react';
-export function Page({children, isLoggedIn, showModal}) {
+import Cookies from "universal-cookie/es6";
+let cookie = new Cookies();
+export function Page({children, isLoggedIn, showModal, showMessage}) {
+    isLoggedIn = cookie.get("IsLoggedIn");
     children = React.Children.toArray(children);
     const payButton = (
         <Button color="red" text="Оплатить онлайн" width={150} height={35}/>
@@ -13,6 +16,13 @@ export function Page({children, isLoggedIn, showModal}) {
         <Modal>
             {children[1]}
         </Modal>
+    );
+    const message = (
+        <article className={s.msgContainer}>
+            <div className={s.msg}>
+                {children[2]}
+            </div>
+        </article>
     );
     return (
         <div className={s.pageContainer}>
@@ -26,6 +36,7 @@ export function Page({children, isLoggedIn, showModal}) {
                 </section>
             </article>
             {showModal ? modal : null}
+            {showMessage ? message : null}
 
         </div>
     );

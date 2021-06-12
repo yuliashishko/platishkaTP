@@ -9,7 +9,8 @@ import {GasIcon} from "../GasIcon";
 import {ElectroIcon} from "../ElectroIcon";
 import {WaterIcon} from "../WaterIcon";
 import {NoDebtIcon} from "../NoDebtIcon";
-
+import Cookies from "universal-cookie/es6";
+let cookie = new Cookies();
 export class Debt extends React.Component {
     state = {
         gas_debt: 0,
@@ -62,7 +63,12 @@ export class Debt extends React.Component {
     }
     async getData() {
         const currPath = 'http://0576a7c0379e.ngrok.io/'
-        const r = await (await fetch(currPath + 'api/v1/user/debt')).json();
+        const r = await (await fetch(currPath + 'api/v1/user/debt'), {
+            headers: {
+                Authorization: `Bearer_${cookie.get('token')}`,
+                'Content-Type': 'application/json'
+            }
+        }).json();
         console.log(r);
         this.setState({
             gas_debt: r.gasDebt,

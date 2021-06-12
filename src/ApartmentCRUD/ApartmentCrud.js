@@ -4,7 +4,10 @@ import s from './Apartment.module.css'
 import React from "react";
 import {EditApartment} from "./ApartmentCrudModals/EditApartment";
 import {AddApartment} from "./ApartmentCrudModals/AddApartment";
-
+import {AddUserModal} from "./ApartmentCrudModals/AddUserModal";
+import Cookies from "universal-cookie/es6";
+import axios from "axios";
+let cookie = new Cookies();
 export class ApartmentCrud extends React.Component {
     state = {
         apartments: [
@@ -17,6 +20,7 @@ export class ApartmentCrud extends React.Component {
                 "gas": "0001",
                 "water": "002",
                 "electro": "234",
+                "username": "ivan2000",
             },
             {
                 "apartmentId": "2",
@@ -27,6 +31,7 @@ export class ApartmentCrud extends React.Component {
                 "gas": "0002",
                 "water": "003",
                 "electro": "235",
+                "username": null,
             },
         ],
         modal: null,
@@ -57,6 +62,7 @@ export class ApartmentCrud extends React.Component {
                         <th>№ элек-во</th>
                         <th>Изменить</th>
                         <th>Удалить</th>
+                        <th>Логин жителя</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -69,11 +75,14 @@ export class ApartmentCrud extends React.Component {
                             <td>{item.gas}</td>
                             <td>{item.water}</td>
                             <td>{item.electro}</td>
+
                             <td>
                                 <button onClick={() => this.onEditApartment(item)}>Изменить</button>
                             </td>
                             <td><Button onClick={() => this.deleteApartment(item.apartmentId)} text="Удалить"
                                         color="red"/></td>
+                            <td>{item.username ? item.username :
+                                <button onClick={() => this.onUser(item)}>Добавить</button>}</td>
                         </tr>
                     ))}
                     </tbody>
@@ -87,7 +96,9 @@ export class ApartmentCrud extends React.Component {
                     <EditApartment apartment={this.state.apartment} onSave={this.onSaveEdit} onCancel={this.cancel}/>
                     : (this.state.modal === "add" && this.state.apartment ?
                         <AddApartment apartment={this.state.apartment} onSave={this.onSaveAdd}
-                                      onCancel={this.cancel}/> : '')}
+                                      onCancel={this.cancel}/> : (this.state.modal === 'user' ?
+                            <AddUserModal apartment={this.state.apartment} onSave={this.onUserSave}
+                                          onCancel={this.cancel}/> : null))}
             </Page>
         );
     };
@@ -105,6 +116,27 @@ export class ApartmentCrud extends React.Component {
         });
         this.getData();
     }
+    onUser = (item) => {
+        this.setState({
+            modal: 'user',
+            apartment: item,
+        })
+    }
+    onUserSave = (item) => {
+        let data = this.state.apartment;
+        fetch('api/v1/admin/apartment', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        this.setState({
+            modal: null,
+        })
+        this.getData();
+
+    }
     onAddApartment = () => {
         this.setState({
             modal: 'add',
@@ -116,7 +148,7 @@ export class ApartmentCrud extends React.Component {
                 "apartmentNumber": "",
                 "gas": "",
                 "water": "",
-                "electro": "",
+                "electro": ""
             },
         });
     }
@@ -136,32 +168,72 @@ export class ApartmentCrud extends React.Component {
     }
     onSaveAdd = () => {
         let data = this.state.apartment;
-        fetch('api/v1/admin/apartment', {
+        fetch('/api/v1/admin/apartment', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookie.get('token')}`,
             }
         });
+        this.setState({
+            modal: null,
+        })
         this.getData();
     }
     onSaveEdit = () => {
         let data = this.state.apartment;
-        fetch('api/v1/admin/apartment', {
+        fetch('/api/v1/admin/apartment', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
+                Authorization: `Bearer_${cookie.get('token')}`,
                 'Content-Type': 'application/json'
             }
         });
+        this.setState({
+            modal: null,
+        })
         this.getData();
     }
 
     async getData() {
-        const r = await (await fetch('api/v1/admin/apartment/all')).json();
-        console.log(r);
-        this.setState({
-            apartments: r,
-        });
+
+        let auth = 'Bearer_' + cookie.get('token');
+        console.log(auth);
+        const config = {
+            headers: { Authorization: `Bearer_${cookie.get('token')}` }
+        };
+        let self = this;
+
+        axios.get( '/api/v1/admin/apartment/all', config)
+            .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    if (response.data)
+                        self.setState({
+                        apartments: response.data,
+                    });
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+        // await fetch('/api/v1/admin/apartment/all', {
+        //     method: 'GET',
+        //     headers: {
+        //         'Authorization': auth,
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(function (response) {
+        //     console.log(response.json());
+        //     this.setState({
+        //         apartments: response.json().data,
+        //     });
+        // });
+
+
     }
 }

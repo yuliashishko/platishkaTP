@@ -26,8 +26,7 @@ export class FAQ extends React.Component {
     }
 
     async getData() {
-        const currPath = 'http://0576a7c0379e.ngrok.io/'
-        const r = await (await fetch(currPath + 'api/v1/info/faq')).json();
+        const r = await (await fetch('api/v1/info/faq')).json();
         console.log(r);
         this.setState({
             faq: r.text,
