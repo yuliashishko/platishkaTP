@@ -184,6 +184,7 @@ export class Payment extends React.Component {
         console.log("Yeah beach");
     }
     checkAccountNumber() {
+
         return this.state.accountNumber > 0 && this.state.type //check real
     }
 

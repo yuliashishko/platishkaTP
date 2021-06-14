@@ -1,6 +1,7 @@
 import {Page} from "../Page/Page";
 import React from "react";
 import Cookies from "universal-cookie/es6";
+import axios from "axios";
 let cookie = new Cookies();
 export class AddInfo extends React.Component {
     state = {
@@ -48,18 +49,45 @@ export class AddInfo extends React.Component {
     }
 
     async getData() {
-        const r = await (await fetch("/api/v1/info/all"), {
-            headers: {
-                Authorization: `Bearer_${cookie.get('token')}`,
-                'Content-Type': 'application/json'
-            }
-        }).json();
-        console.log(r);
-        this.setState({
-            [r[0].name]:r[0].text,
-            [r[1].name]:r[1].text,
-            [r[2].name]:r[2].text,
-        });
+
+
+        let auth = 'Bearer_' + cookie.get('token');
+        console.log(auth);
+        const config = {
+            headers: {Authorization: `Bearer_${cookie.get('token')}`}
+        };
+        let self = this;
+
+        axios.get('/api/v1/info/all', config)
+            .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    if (response.data) {
+                        const r = response.data;
+                        self.setState({
+                            [r[0].name]: r[0].text,
+                            [r[1].name]: r[1].text,
+                            [r[2].name]: r[2].text,
+                        });
+                    }
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        // const r = await (await fetch("/api/v1/info/all"), {
+        //     headers: {
+        //         Authorization: `Bearer_${cookie.get('token')}`,
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).json();
+        // console.log(r);
+        // this.setState({
+        //     [r[0].name]:r[0].text,
+        //     [r[1].name]:r[1].text,
+        //     [r[2].name]:r[2].text,
+        // });
 
     }
 

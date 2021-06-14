@@ -21,7 +21,11 @@ export class Login extends React.Component {
             redirect: false,
         });
     }
-
+    state = {
+        username: null,
+        password: null,
+        redirect: false,
+    }
 
     render() {
         if (this.state.redirect) {

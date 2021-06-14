@@ -7,7 +7,9 @@ import {AddApartment} from "./ApartmentCrudModals/AddApartment";
 import {AddUserModal} from "./ApartmentCrudModals/AddUserModal";
 import Cookies from "universal-cookie/es6";
 import axios from "axios";
+
 let cookie = new Cookies();
+
 export class ApartmentCrud extends React.Component {
     state = {
         apartments: [
@@ -111,7 +113,8 @@ export class ApartmentCrud extends React.Component {
             method: 'DELETE',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookie.get('token')}`,
             }
         });
         this.getData();
@@ -122,13 +125,16 @@ export class ApartmentCrud extends React.Component {
             apartment: item,
         })
     }
-    onUserSave = (item) => {
-        let data = this.state.apartment;
-        fetch('api/v1/admin/apartment', {
+    onUserSave = (id, apartment) => {
+        let data = apartment;
+        console.log(data);
+        fetch('/api/v1/admin/apartment/add_user', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+
+                Authorization: `Bearer_${cookie.get('token')}`,
             }
         });
         this.setState({
@@ -202,18 +208,18 @@ export class ApartmentCrud extends React.Component {
         let auth = 'Bearer_' + cookie.get('token');
         console.log(auth);
         const config = {
-            headers: { Authorization: `Bearer_${cookie.get('token')}` }
+            headers: {Authorization: `Bearer_${cookie.get('token')}`}
         };
         let self = this;
 
-        axios.get( '/api/v1/admin/apartment/all', config)
+        axios.get('/api/v1/admin/apartment/all', config)
             .then(function (response) {
                 console.log(response);
                 if (response.status == 200) {
                     if (response.data)
                         self.setState({
-                        apartments: response.data,
-                    });
+                            apartments: response.data,
+                        });
                 }
             })
             .catch(function (error) {
