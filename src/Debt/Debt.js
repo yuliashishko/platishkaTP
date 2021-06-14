@@ -12,6 +12,11 @@ import {NoDebtIcon} from "../NoDebtIcon";
 import Cookies from "universal-cookie/es6";
 let cookie = new Cookies();
 export class Debt extends React.Component {
+    constructor(props) {
+        super(props);
+        this.getData();
+    }
+
     state = {
         gas_debt: 0,
         water_debt: 2,
@@ -28,8 +33,8 @@ export class Debt extends React.Component {
                     <tr>
                         <th></th>
                         <th>Услуга</th>
-                        <th>Задолженность</th>
-                        <th>Картиночка</th>
+                        <th>Задолженность (мес)</th>
+                        <th></th>
                     </tr>
                     <tr>
                         <td><GasIcon/></td>
@@ -62,13 +67,12 @@ export class Debt extends React.Component {
 
     }
     async getData() {
-        const currPath = 'http://0576a7c0379e.ngrok.io/'
-        const r = await (await fetch(currPath + 'api/v1/user/debt'), {
+        const r = await (await fetch('/api/v1/user/debt', {
             headers: {
                 Authorization: `Bearer_${cookie.get('token')}`,
                 'Content-Type': 'application/json'
             }
-        }).json();
+        })).json();
         console.log(r);
         this.setState({
             gas_debt: r.gasDebt,
