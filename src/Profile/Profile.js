@@ -7,6 +7,7 @@ import {ChangePassword} from "./ProfileModals/ChangePassword";
 import {delay} from "../utils";
 import {TelegrammModal} from "./ProfileModals/TelegrammModal";
 import Cookies from "universal-cookie/es6";
+import axios from "axios";
 let cookies = new Cookies();
 export class Profile extends React.Component {
     constructor() {
@@ -90,23 +91,54 @@ export class Profile extends React.Component {
     }
 
     async getData() {
-        const r = await (await fetch('/api/v1/user'), {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer_${cookies.get('token')}`,
-                'Content-Type': 'application/json'
-            }
-        }).json();
-        console.log(r);
-        this.setState({
-            address: r.address,
-            gas_number: r.gasPersonalCode,
-            gas_firm: r.gasExecutor,
-            water_firm: r.waterExecutor,
-            water_number: r.waterPersonalCode,
-            electro_number: r.electPersonalCode,
-            electro_firm: r.electExecutor,
-        });
+
+
+
+        const config = {
+            headers: {Authorization: `Bearer_${cookies.get('token')}`}
+        };
+        let self = this;
+
+        axios.get('/api/v1/user', config)
+            .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    if (response.data) {
+                        let r = response.data;
+                        self.setState({
+                            address: r.address,
+                            gas_number: r.gasPersonalCode,
+                            gas_firm: r.gasExecutor,
+                            water_firm: r.waterExecutor,
+                            water_number: r.waterPersonalCode,
+                            electro_number: r.electPersonalCode,
+                            electro_firm: r.electExecutor,
+                        });
+                    }
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+        // const r = await (await fetch('/api/v1/user'), {
+        //     method: 'GET',
+        //     headers: {
+        //         Authorization: `Bearer_${cookies.get('token')}`,
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).json();
+        // console.log(r);
+        // this.setState({
+        //     address: r.address,
+        //     gas_number: r.gasPersonalCode,
+        //     gas_firm: r.gasExecutor,
+        //     water_firm: r.waterExecutor,
+        //     water_number: r.waterPersonalCode,
+        //     electro_number: r.electPersonalCode,
+        //     electro_firm: r.electExecutor,
+        // });
     }
     getLink = () => {
         return "Иди в телегу"

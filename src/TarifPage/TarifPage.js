@@ -5,6 +5,9 @@ import {ElectroIcon} from "../ElectroIcon";
 import {WaterIcon} from "../WaterIcon";
 import React from 'react';
 import {TarifModal} from "./TarifModal/TarifModal";
+import axios from "axios";
+import Cookies from "universal-cookie/es6";
+let cookies = new Cookies();
 export class TarifPage extends React.Component {
     state = {
         curr_gas: 200,
@@ -99,11 +102,12 @@ export class TarifPage extends React.Component {
             date: Date.now(),
             serviceName: this.state.modal,
         };
-         await fetch('/api/v1/tarifs/', {
-             method: 'PUT',
+         await fetch('/api/v1/admin/tariff', {
+             method: 'POST',
              body: JSON.stringify(data),
              headers: {
-                 'Content-Type':'application/json'
+                 'Content-Type':'application/json',
+                 Authorization: `Bearer_${cookies.get('token')}`
              }
          });
          this.setState({
@@ -117,12 +121,34 @@ export class TarifPage extends React.Component {
         });
     }
     async getData() {
-        const r = await (await fetch('/api/v1/admin/tariff/active')).json();
-        console.log(r);
-        this.setState({
-            curr_gas: r.gas,
-            curr_electro: r.electricity,
-            curr_water: r.water,
-        });
+        const config = {
+            headers: {Authorization: `Bearer_${cookies.get('token')}`}
+        };
+        let self = this;
+
+        axios.get('/api/v1/admin/tariff/active', config)
+            .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    if (response.data)
+                        self.setState({
+                            curr_gas: response.data.gas,
+                            curr_electro: response.data.electricity,
+                            curr_water: response.data.water,
+                        });
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        //
+        // const r = await (await fetch('/api/v1/admin/tariff/active')).json();
+        // console.log(r);
+        // this.setState({
+        //     curr_gas: r.gas,
+        //     curr_electro: r.electricity,
+        //     curr_water: r.water,
+        // });
     }
 }
