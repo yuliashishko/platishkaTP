@@ -6,7 +6,8 @@ import {ProfileIcon} from "../ProfileIcon/ProfileIcon";
 import {ChangePassword} from "./ProfileModals/ChangePassword";
 import {delay} from "../utils";
 import {TelegrammModal} from "./ProfileModals/TelegrammModal";
-
+import Cookies from "universal-cookie/es6";
+let cookies = new Cookies();
 export class Profile extends React.Component {
     constructor() {
         super();
@@ -89,8 +90,14 @@ export class Profile extends React.Component {
     }
 
     async getData() {
-        const r = await (await fetch('/api/v1/user')).json();
-        //console.log(r);
+        const r = await (await fetch('/api/v1/user'), {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer_${cookies.get('token')}`,
+                'Content-Type': 'application/json'
+            }
+        }).json();
+        console.log(r);
         this.setState({
             address: r.address,
             gas_number: r.gasPersonalCode,
@@ -124,6 +131,7 @@ export class Profile extends React.Component {
     onSavePassword = async (user) => {
         let data = user;
         if (!data.newPassword) {
+            alert("Пустой пароль");
             this.setState({
                 message: "Пустой пароль",
             });
@@ -134,6 +142,7 @@ export class Profile extends React.Component {
             return;
         }
         if (data.newPassword === data.repeatPassword) {
+            alert("Новый пароль полностью дублирует старый");
             this.setState({
                 message: "Новый пароль полностью дублирует старый",
             });
@@ -143,6 +152,7 @@ export class Profile extends React.Component {
             });
         }
         if (data.newPassword !== data.repeatPassword) {
+            alert("Пароли не совпадают");
             this.setState({
                 message: "Пароли не совпадают",
             });
@@ -155,7 +165,8 @@ export class Profile extends React.Component {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer_${cookies.get('token')}`,
                 }
             })).json();
             if (r.state === "success") {

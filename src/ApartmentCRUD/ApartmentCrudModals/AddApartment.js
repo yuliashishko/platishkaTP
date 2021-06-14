@@ -13,6 +13,9 @@ export class AddApartment extends React.Component {
             <div>
                 <h2>Привязать счета к квартире</h2>
                 <br/>
+                <label htmlFor="buildingCity">Город</label>
+                <input name="buildingCity" type="text" value={this.state.apartment.buildingCity}
+                       onChange={(e) => this.changeValue("buildingCity", e.target.value)}/>
                 <label for="buildingStreet">Улица</label>
                 <input name="buildingStreet" type="text" value={this.state.apartment.buildingStreet} onChange={(e) => this.changeValue("buildingStreet", e.target.value)}/>
                 <label for="buildingNumber">Дом</label>

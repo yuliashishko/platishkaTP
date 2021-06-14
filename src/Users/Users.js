@@ -3,7 +3,9 @@ import {Button} from "../Button/Button";
 import s from './Users.module.css'
 import React from "react";
 import {UserModal} from "./UsersModal/UserModal";
-
+import Cookies from "universal-cookie/es6";
+import axios from "axios";
+let cookies = new Cookies();
 
 export class Users extends React.Component {
     state = {
@@ -85,7 +87,12 @@ export class Users extends React.Component {
         })
     };
     async generatePassword() {
-        const r = await (await fetch('/api/v1/admin/users/all')).json();
+        const r = await (await fetch('/api/v1/admin/users/all'), {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookies.get('token')}`,
+            }
+        }).json();
         return r.password;
     }
     onChangeUser = (item) => {
@@ -96,11 +103,13 @@ export class Users extends React.Component {
     }
     onSave = (user) => {
         let data = user;
+        console.log(user);
         fetch('/api/v1/admin/users', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookies.get('token')}`,
             }
         });
         this.setState({
@@ -115,7 +124,8 @@ export class Users extends React.Component {
             method: 'DELETE',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookies.get('token')}`,
             }
         });
         this.getData();
@@ -129,7 +139,8 @@ export class Users extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookies.get('token')}`,
             }
         });
         this.getData();
@@ -139,12 +150,40 @@ export class Users extends React.Component {
             modal: null,
         });
     }
+
     async getData() {
-        const r = await (await fetch('/api/v1/admin/users/all')).json();
-        console.log(r);
-        this.setState({
-            users: r,
-        });
+        let auth = 'Bearer_' + cookies.get('token');
+        console.log(auth);
+        const config = {
+            headers: {Authorization: `Bearer_${cookies.get('token')}`}
+        };
+        let self = this;
+
+        axios.get('/api/v1/admin/users/all', config)
+            .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    if (response.data)
+                        self.setState({
+                            users: response.data,
+                        });
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+
+        // const r = await (await fetch('/api/v1/admin/users/all'), {
+        //     headers: {
+        //         'Authorization': `Bearer_${cookies.get('token')}`,
+        //     }
+        // }).json();
+        // console.log(r);
+        // this.setState({
+        //     users: r,
+        // });
     };
 
 }
