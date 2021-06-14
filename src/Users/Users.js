@@ -74,8 +74,8 @@ export class Users extends React.Component {
         );
     };
 
-    onCreateUser = () => {
-        let passwd = this.generatePassword()
+    onCreateUser = async () => {
+        let passwd = await this.generatePassword()
         this.setState({
             modal: "add",
             user: {
@@ -87,13 +87,32 @@ export class Users extends React.Component {
         })
     };
     async generatePassword() {
-        const r = await (await fetch('/api/v1/admin/users/all'), {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer_${cookies.get('token')}`,
-            }
-        }).json();
-        return r.password;
+        const config = {
+            headers: {Authorization: `Bearer_${cookies.get('token')}`}
+        };
+
+        axios.post('/api/v1/admin/users/generate_pass', config)
+            .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    console.log(response.data)
+                    if (response.data)
+                        return response.data.password;
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+        // const r = await (await fetch('/api/v1/admin/users/generate_pass', {
+        //     method:"POST",
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         Authorization: `Bearer_${cookies.get('token')}`,
+        //     }
+        // })).json();
+        // return r.password;
     }
     onChangeUser = (item) => {
         this.setState({

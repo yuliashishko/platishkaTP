@@ -65,12 +65,12 @@ export class History extends React.Component {
         );
     }
     async getData() {
-        const r = await (await fetch('api/v1/news/7'), {
+        const r = await (await fetch('/api/v1/user/payment_history', {
             headers: {
                 Authorization: `Bearer_${cookie.get('token')}`,
                 'Content-Type': 'application/json'
             }
-        }).json();
+        })).json();
         console.log(r);
         this.setState({
             payHistory: r,

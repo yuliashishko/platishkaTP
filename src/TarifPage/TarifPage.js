@@ -46,7 +46,7 @@ export class TarifPage extends React.Component {
                         <td><ElectroIcon/></td>
                         <td><label>{this.state.curr_electro}</label></td>
                         <td>
-                            <button onClick={() => this.clickedOn("electro")}>Изменить</button>
+                            <button onClick={() => this.clickedOn("electricity")}>Изменить</button>
                         </td>
                     </tr>
                     <tr>
@@ -78,7 +78,7 @@ export class TarifPage extends React.Component {
                 newVal = this.state.curr_water;
                 break;
             }
-            case "electro" : {
+            case "electricity" : {
                 newVal = this.state.curr_electro;
                 break;
             }
@@ -95,13 +95,12 @@ export class TarifPage extends React.Component {
         })
     }
      save = async (id, value) => { //узнать шо как
-        console.log(id, value);
+        //console.log(value);
         const data = {
-            id,
             cost: value,
-            date: Date.now(),
             serviceName: this.state.modal,
         };
+        console.log(data);
          await fetch('/api/v1/admin/tariff', {
              method: 'POST',
              body: JSON.stringify(data),
@@ -130,6 +129,7 @@ export class TarifPage extends React.Component {
             .then(function (response) {
                 console.log(response);
                 if (response.status == 200) {
+                    console.log(response.data)
                     if (response.data)
                         self.setState({
                             curr_gas: response.data.gas,
