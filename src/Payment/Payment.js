@@ -3,8 +3,12 @@ import {Page} from "../Page/Page";
 import gif from "../TryPay/giphy.gif";
 import chair from "../TryPay/chair.png";
 import Cookies from 'universal-cookie';
+import s from './Payment.module.css'
+import * as cn from "classnames";
+
 const cookies = new Cookies();
-function Product({product, onSuccess}) {
+
+function Product({product}) {
     const [paidFor, setPaidFor] = useState(false);
     const [error, setError] = useState(null);
     const paypalRef = useRef();
@@ -29,6 +33,19 @@ function Product({product, onSuccess}) {
                     const order = await actions.order.capture();
                     setPaidFor(true);
                     console.log(order);
+                    let val = {
+                        "sum": product.price,
+                        "personalCode": product.accountNumber,
+                        "serviceName": product.name,
+                        "currAmount": product.lastValue,
+                    };
+                    const r = await (await fetch('/api/v1/pay/success', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    })).json();
                 },
                 onError: err => {
                     setError(err);
@@ -42,7 +59,7 @@ function Product({product, onSuccess}) {
         //this.onSuccess()
         return (
             <div>
-                <h1>Congrats, you just make {product.name}!</h1>
+                <h1>Ваш платеж принят, спасибо, что выбрали нас!</h1>
                 <img alt={product.description} src={gif}/>
             </div>
         );
@@ -50,11 +67,11 @@ function Product({product, onSuccess}) {
 
     return (
         <div>
-            {error && <div>Uh oh, an error occurred! {error.message}</div>}
+            {error && <div>Что-то пошло не так, обратитесь в банк! {error.message}</div>}
             <h1>
-                {product.name} for ${product.price}
+               Счет составит {product.price} рублей.
             </h1>
-            <img alt={product.description} width="200"/>
+            {product.description}
             <div ref={paypalRef}/>
         </div>
     );
@@ -80,54 +97,79 @@ export class Payment extends React.Component {
 
             <Page isLoggedIn={this.state.isLoggedIn} showModal={false}>
                 <div>
-                    <div>
-                        <h3> Выберите оплачиваемую услугу</h3>
-                        {this.state.stage === 1 ? <div>
-                            <button onClick={() => this.typeSelected("gas")}>Газ</button>
-                            <button onClick={() => this.typeSelected("electro")}>Электричество</button>
-                            <button onClick={() => this.typeSelected("water")}>Вода</button>
-                            <label for="accountNumber">Введите номер счета</label>
-                            <input name="accountNumber" value={this.state.accountNumber}
-                                   disabled={this.state.isLoggedIn}
-                                   onChange={(e) => this.changeValue("accountNumber", e)}/>
-                        </div> : null}
+                    <h2>Коммунальные платежи</h2>
+                    <div className={s.subText}>У нас можно оплатить услуги ЖКХ: газ, электричество, водоснабжение</div>
+                    <div className={s.columnsContainer}>
+                        <div className={s.leftColumn}>
+                            <div>
+                                <div className={s.row}>
+                                    <div className={cn(this.state.stage >= 1 ? s.greenCircle : s.greyCircle)}>1</div>
+                                    <h4> Выберите оплачиваемую услугу</h4></div>
+                                {this.state.stage === 1 ? <div className={s.buttonsBlock}>
+                                    <button onClick={() => this.typeSelected("gas")}
+                                            className={cn(this.state.type === "gas" ? s.blueButtonSelected : s.blueButton)}>Газ
+                                    </button>
+                                    <button onClick={() => this.typeSelected("electro")}
+                                            className={cn(this.state.type === "electro" ? s.blueButtonSelected : s.blueButton)}>
+                                        Электричество
+                                    </button>
+                                    <button onClick={() => this.typeSelected("water")}
+                                            className={cn(this.state.type === "water" ? s.blueButtonSelected : s.blueButton)}>Вода
+                                    </button>
+                                    <label for="accountNumber">Введите номер счета</label>
+                                    <input name="accountNumber" value={this.state.accountNumber}
+                                           className={s.blueButton}
+                                           disabled={this.state.isLoggedIn === true}
+                                           onChange={(e) => this.changeValue("accountNumber", e)}/>
+                                </div> : null}
+                            </div>
+                            <div>
+                                <div className={s.row}>
+                                    <div className={cn(this.state.stage >= 2 ? s.greenCircle : s.greyCircle)}>2</div>
+                                    <h4> Введите данные платежа</h4></div>
+                                {this.state.stage === 2 ? <div className={s.buttonsBlock}>
+                                    <label htmlFor="lastValue">Последние показания</label>
+                                    <input name="lastValue" value={this.state.lastValue} disabled={true}
+                                           onChange={(e) => this.changeValue("lastValue", e)}/>
+                                    <label htmlFor="currValue">Текущие показания</label>
+                                    <input name="currValue" value={this.state.currValue}
+                                           onChange={(e) => this.changeValue("currValue", e)}/>
+                                </div> : null}
+                            </div>
+                            <div>
+                                <div className={s.row}>
+                                    <div className={cn(this.state.stage >= 3 ? s.greenCircle : s.greyCircle)}>3</div>
+                                    <h4> Итого к оплате</h4></div>
+                                {this.state.stage === 3 ? <div>
+                                    <table className={s.tableContainer}>
+                                        <tr>
+                                            <th width="30%">Последние показания</th>
+                                            <th width="30%">Текущие показания</th>
+                                            <th width="20%">Тариф</th>
+                                            <th width="20%">К оплате</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{this.state.lastValue}</td>
+                                            <td>{this.state.currValue}</td>
+                                            <td>{this.state.tarif}</td>
+                                            <td>{this.calcTotal()}</td>
+                                        </tr>
+                                    </table>
+                                </div> : null}
+                            </div>
+                            <div>
+                                <div className={s.row}>
+                                    <div className={cn(this.state.stage >= 4 ? s.greenCircle : s.greyCircle)}>4</div>
+                                    <h4> Оплатите</h4></div>
+                                {this.state.stage === 4 ?
+                                    <Product product={this.state.pay}/> : null}
+                            </div>
+                        </div>
+                        <div className={s.rightColumn}>
+                            <img src="payment.png" width="210" height="240"/>
+                            <button className={s.nextButton} onClick={() => this.nextButtonClicked()}>Далее</button>
+                        </div>
                     </div>
-                    <div>
-                        <h3> Введите данные платежа</h3>
-                        {this.state.stage === 2 ? <div>
-                            <label htmlFor="lastValue">Последние показания</label>
-                            <input name="lastValue" value={this.state.lastValue} disabled={true}
-                                   onChange={(e) => this.changeValue("lastValue", e)}/>
-                            <label htmlFor="currValue">Текущие показания</label>
-                            <input name="currValue" value={this.state.currValue}
-                                   onChange={(e) => this.changeValue("currValue", e)}/>
-                        </div> : null}
-                    </div>
-                    <div>
-                        <h3> Итого к оплате</h3>
-                        {this.state.stage === 3 ? <div>
-                            <table>
-                                <tr>
-                                    <th>Последние показания</th>
-                                    <th>Текущие показания</th>
-                                    <th>Коэффициент</th>
-                                    <th>К оплате</th>
-                                </tr>
-                                <tr>
-                                    <td>{this.state.lastValue}</td>
-                                    <td>{this.state.currValue}</td>
-                                    <td>{this.state.tarif}</td>
-                                    <td>{this.calcTotal()}</td>
-                                </tr>
-                            </table>
-                        </div> : null}
-                    </div>
-                    <div>
-                        <h3> Оплатите</h3>
-                        {this.state.stage === 4 ?
-                            <Product product={this.state.pay} onSuccess={() => this.paymentSuccess()}/>: null}
-                    </div>
-                    <button onClick={() => this.nextButtonClicked()}>Далее</button>
                 </div>
             </Page>
         );
@@ -137,13 +179,22 @@ export class Payment extends React.Component {
         this.setState({
             type: type,
         });
+        let data = {
+            "serviceName": type,
+        };
+        console.log(data)
         if (this.state.isLoggedIn) {
-            const r = await (await fetch('api/v1/payment/page_1/' + type), {
-                Authorization: `Bearer_${cookies.get('token')}`,
-            }).json();
+            const r = await (await fetch('/api/v1/pay/page_1', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    Authorization: `Bearer_${cookies.get('token')}`,
+                }
+            })).json();
             console.log(r);
             this.setState({
-                accountNumber: r.accountNumber,
+                accountNumber: r.personalCode,
             });
         }
     }
@@ -152,11 +203,12 @@ export class Payment extends React.Component {
         let curr_stage = this.state.stage;
         if (curr_stage === 1) {
             if (this.state.type === '') return;
-            if (!this.checkAccountNumber()) return;
+            if (!await (this.checkAccountNumber())) return;
+            await this.getLastValue();
             this.setState({
                 stage: this.state.stage + 1,
             });
-            this.getLastValue();
+
         }
         if (curr_stage === 2) {
             if (this.state.lastValue < 0 || this.state.currValue <= this.state.lastValue) return;
@@ -171,8 +223,10 @@ export class Payment extends React.Component {
                 stage: this.state.stage + 1,
                 pay: {
                     price: this.calcTotal(),
-                    name: 'payment for ' + this.state.type,
-                    description: 'Thank you for using us'
+                    name: this.state.type,
+                    lastValue: this.state.lastValue,
+                    accountNumber: this.state.accountNumber,
+                    description: 'Нажмите для оплаты'
                 }
             })
         }
@@ -180,20 +234,53 @@ export class Payment extends React.Component {
             //сообщить успешно/нет
         }
     }
-    paymentSuccess() {
-        console.log("Yeah beach");
-    }
-    checkAccountNumber() {
 
+
+    checkAccountNumber = async () => {
+        let data = {
+            "personalCode": this.state.accountNumber,
+            "serviceName": this.state.type,
+        };
+        if (!this.state.isLoggedIn) {
+            const r = await (await fetch('/api/v1/pay/page_1', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }
+            })).json();
+            console.log(r);
+            return r.status === "success"
+        }
         return this.state.accountNumber > 0 && this.state.type //check real
     }
 
-    getLastValue() {
-        this.setState({
-            lastValue: 0,
-            tarif: 10,
+    getLastValue = async () => {
+        let data = {
+            "personalCode": this.state.accountNumber,
+            "serviceName": this.state.type,
+        };
+        let self = this;
+
+        const r = await (await fetch('/api/v1/pay/page_2', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }
+        })).json();
+        console.log("Last value got")
+        console.log(r);
+        self.setState({
+            lastValue: r.prevAmount,
+            tarif: r.tariffCost,
         })
-        // TODO
+
+
+        // this.setState({
+        //     lastValue: 0,
+        //     tarif: 10,
+        // })
     }
 
     changeValue = (field, e) => {
