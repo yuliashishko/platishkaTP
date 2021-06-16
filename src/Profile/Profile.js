@@ -173,11 +173,8 @@ export class Profile extends React.Component {
             });
             return;
         }
-        if (data.newPassword === data.repeatPassword) {
+        if (data.newPassword === data.oldPassword) {
             alert("Новый пароль полностью дублирует старый");
-            this.setState({
-                message: "Новый пароль полностью дублирует старый",
-            });
             await delay(2000);
             this.setState({
                 message: null,
@@ -185,15 +182,12 @@ export class Profile extends React.Component {
         }
         if (data.newPassword !== data.repeatPassword) {
             alert("Пароли не совпадают");
-            this.setState({
-                message: "Пароли не совпадают",
-            });
             await delay(2000);
             this.setState({
                 message: null,
             });
         } else {
-            let r = (await fetch('api/v1/user/change_pass', {
+            let r = await (await fetch('api/v1/user/change_pass', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
@@ -201,16 +195,17 @@ export class Profile extends React.Component {
                     Authorization: `Bearer_${cookies.get('token')}`,
                 }
             })).json();
-            if (r.state === "success") {
+            console.log(r);
+            console.log("checked")
+            if (r.status === "success") {
+                alert( "Пароль успешно сменен")
                 this.setState({
                     modal: null,
-                    message: "Пароль успешно сменен"
                 })
                 this.getData();
             } else {
-                this.setState({
-                    message: "Старый пароль указан неверно!"
-                })
+                console.log(r);
+                alert("Старый пароль указан неверно!");
             }
         }
 

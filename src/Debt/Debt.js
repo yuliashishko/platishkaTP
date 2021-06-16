@@ -10,6 +10,8 @@ import {ElectroIcon} from "../ElectroIcon";
 import {WaterIcon} from "../WaterIcon";
 import {NoDebtIcon} from "../NoDebtIcon";
 import Cookies from "universal-cookie/es6";
+import s from './Debt.module.css'
+
 let cookie = new Cookies();
 export class Debt extends React.Component {
     constructor(props) {
@@ -26,33 +28,29 @@ export class Debt extends React.Component {
     render() {
         let content = (
             <div>
-                <Card title="Задолженности">
-                    <DebtIcon height={50} width={50}/>
-                </Card>
-                <table>
-                    <tr>
-                        <th></th>
-                        <th>Услуга</th>
-                        <th>Задолженность (мес)</th>
-                        <th></th>
-                    </tr>
+                <div className={s.card}>
+                    <Card title="Задолженности" >
+                        <DebtIcon height={50} width={50}/>
+                    </Card>
+                </div>
+                <table className={s.table}>
                     <tr>
                         <td><GasIcon/></td>
                         <td>Газоснабжение</td>
-                        <td> {this.state.gas_debt}</td>
+                        <td className={s.debt}> {this.state.gas_debt > 0 ? "Неоплаченных месяцев: " + this.state.gas_debt : "Все оплачено"}</td>
                         <td>{this.state.gas_debt > 0 ? <ExistDebtIcon/> : <NoDebtIcon/>}</td>
 
                     </tr>
                     <tr>
                         <td><ElectroIcon/></td>
                         <td>Электричество</td>
-                        <td> {this.state.electro_debt}</td>
+                        <td className={s.debt}> {this.state.electro_debt > 0 ? "Неоплаченных месяцев: " + this.state.electro_debt : "Все оплачено"}</td>
                         <td>{this.state.electro_debt > 0 ? <ExistDebtIcon/> : <NoDebtIcon/>}</td>
                     </tr>
                     <tr>
                         <td><WaterIcon/></td>
                         <td>Вода</td>
-                        <td> {this.state.water_debt}</td>
+                        <td className={s.debt}> {this.state.water_debt > 0 ? "Неоплаченных месяцев: " + this.state.water_debt : "Все оплачено"}</td>
                         <td>{this.state.water_debt > 0 ? <ExistDebtIcon/> : <NoDebtIcon/>}</td>
                     </tr>
                 </table>

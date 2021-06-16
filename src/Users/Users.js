@@ -34,9 +34,8 @@ export class Users extends React.Component {
     render() {
         let content = (
             <div>
-                <label>Пользователи</label>
-                <br/>
-                <button onClick={() => this.onCreateUser()}>Добавить</button>
+                <h2>Пользователи</h2>
+                <button className={s.addButton} onClick={() => this.onCreateUser()}>Добавить</button>
                 <table className={s.table}>
                     <thead>
                     <th>ФИО</th>
@@ -154,7 +153,7 @@ export class Users extends React.Component {
         const data = {
             'id': id,
         }
-        await fetch('/api/v1/admin/reset_pass', {
+        await fetch('/api/v1/admin/users/reset_pass', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

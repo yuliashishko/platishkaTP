@@ -49,9 +49,9 @@ export class ApartmentCrud extends React.Component {
     render() {
         let content = (
             <div>
-                <label>Редактирование счетов у квартир</label>
+                <h2>Редактирование счетов у квартир</h2>
                 <br/>
-                <button onClick={() => this.onAddApartment()}>Добавить</button>
+                <button className={s.addButton} onClick={() => this.onAddApartment()}>Добавить</button>
                 <table className={s.table}>
                     <thead>
                     <tr>
@@ -125,10 +125,10 @@ export class ApartmentCrud extends React.Component {
             apartment: item,
         })
     }
-    onUserSave = (id, apartment) => {
+    onUserSave = async (id, apartment) => {
         let data = apartment;
         console.log(data);
-        fetch('/api/v1/admin/apartment/add_user', {
+        await fetch('/api/v1/admin/apartment/add_user', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -140,7 +140,7 @@ export class ApartmentCrud extends React.Component {
         this.setState({
             modal: null,
         })
-        this.getData();
+        await this.getData();
 
     }
     onAddApartment = () => {

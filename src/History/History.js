@@ -33,9 +33,11 @@ export class History extends React.Component {
     render() {
         let content = (
             <div>
+                <div className={s.card}>
                 <Card title="История платежей">
                     <HistoryIcon height={50} width={50}/>
                 </Card>
+                </div>
                 <table className={s.table}>
                     <thead>
                     <tr>

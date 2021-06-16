@@ -95,7 +95,7 @@ export function Home({loggedIn, isAdmin}) {
                     </div>
                     <div className={s.superLink}>
                         <Link to="/admin/info">
-                            <Card title="Добавить информацию">
+                            <Card title="Изменение информации">
                                 <InfoIcon/>
                             </Card>
                         </Link>
@@ -104,7 +104,7 @@ export function Home({loggedIn, isAdmin}) {
                 <div className={s.column}>
                     <div className={s.superLink}>
                         <Link to="/admin/users">
-                            <Card title="Пользователи">
+                            <Card title="&nbsp;&emsp;&emsp;Пользователи&emsp;&emsp;&nbsp;">
                                 <UsersIcon/>
                             </Card>
                         </Link>
