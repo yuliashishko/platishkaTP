@@ -16,7 +16,7 @@ import {TarifIcon} from "../TarifIcon";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 export function Home({loggedIn, isAdmin}) {
-    loggedIn = cookies.get('isLoggedIn');
+    loggedIn = cookies.get('isLoggedIn') === "true";
     isAdmin = cookies.get('role') === 'admin'; // get his role
 
     let content = (
@@ -82,7 +82,7 @@ export function Home({loggedIn, isAdmin}) {
             </section>
         )
     }
-    if (isAdmin) {
+    if (isAdmin && loggedIn) {
         content = (
             <section className={s.table}>
                 <div className={s.column}>

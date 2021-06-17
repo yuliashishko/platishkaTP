@@ -26,7 +26,7 @@ export function Navigation({isLoggedIn}) {
                     </Link>
                 </div>
                 <Link to="/login">
-                    <Button text={isLoggedIn ? "Вход" : "Выход"} color="red"/>
+                    <Button text={isLoggedIn ? "Выход" : "Вход"} color="red" />
                 </Link>
             </section>
         </article>

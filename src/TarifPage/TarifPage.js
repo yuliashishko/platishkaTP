@@ -7,7 +7,10 @@ import React from 'react';
 import {TarifModal} from "./TarifModal/TarifModal";
 import axios from "axios";
 import Cookies from "universal-cookie/es6";
+import s from "./TarifPage.module.css";
+
 let cookies = new Cookies();
+
 export class TarifPage extends React.Component {
     state = {
         curr_gas: 200,
@@ -32,31 +35,32 @@ export class TarifPage extends React.Component {
     render() {
         let content = (
             <div>
-                <label>Тарифы</label>
-                <br/>
-                <table>
-                    <tr>
-                        <td><GasIcon/></td>
-                        <td><label>{this.state.curr_gas}</label></td>
-                        <td>
-                            <button onClick={() => this.clickedOn("gas")}>Изменить</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><ElectroIcon/></td>
-                        <td><label>{this.state.curr_electro}</label></td>
-                        <td>
-                            <button onClick={() => this.clickedOn("electricity")}>Изменить</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><WaterIcon/></td>
-                        <td><label>{this.state.curr_water}</label></td>
-                        <td>
-                            <button onClick={() => this.clickedOn("water")}>Изменить</button>
-                        </td>
-                    </tr>
-                </table>
+                <h2>Тарифы</h2>
+                <div className={s.container}>
+                    <table className={s.table}>
+                        <tr>
+                            <td><GasIcon/></td>
+                            <td><label>{this.state.curr_gas}</label></td>
+                            <td>
+                                <button onClick={() => this.clickedOn("gas")}>Изменить</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><ElectroIcon/></td>
+                            <td><label>{this.state.curr_electro}</label></td>
+                            <td>
+                                <button onClick={() => this.clickedOn("electricity")}>Изменить</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><WaterIcon/></td>
+                            <td><label>{this.state.curr_water}</label></td>
+                            <td>
+                                <button onClick={() => this.clickedOn("water")}>Изменить</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         );
 
@@ -67,6 +71,7 @@ export class TarifPage extends React.Component {
             </Page>
         );
     }
+
     getValue() {
         let newVal = 0;
         switch (this.state.modal) {
@@ -89,36 +94,39 @@ export class TarifPage extends React.Component {
         }
         return newVal;
     }
+
     clickedOn(type) {
         this.setState({
             modal: type,
         })
     }
-     save = async (id, value) => { //узнать шо как
+
+    save = async (id, value) => { //узнать шо как
         //console.log(value);
         const data = {
             cost: value,
             serviceName: this.state.modal,
         };
         console.log(data);
-         await fetch('/api/v1/admin/tariff', {
-             method: 'POST',
-             body: JSON.stringify(data),
-             headers: {
-                 'Content-Type':'application/json',
-                 Authorization: `Bearer_${cookies.get('token')}`
-             }
-         });
-         this.setState({
-             modal: null,
-         });
-         await this.getData();
+        await fetch('/api/v1/admin/tariff', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer_${cookies.get('token')}`
+            }
+        });
+        this.setState({
+            modal: null,
+        });
+        await this.getData();
     }
-    cancel =  () => {
+    cancel = () => {
         this.setState({
             modal: null,
         });
     }
+
     async getData() {
         const config = {
             headers: {Authorization: `Bearer_${cookies.get('token')}`}

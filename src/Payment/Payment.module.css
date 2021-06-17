@@ -98,15 +98,14 @@ h2 {
     border-radius: 12px;
     font-size: 20px;
 }
-table {
+.mytable {
     margin-bottom: 20px;
     border: 1px solid #dddddd;
     border-collapse: collapse;
     word-break: break-word;
 
 }
-table th, td{
-    border: 1px solid #dddddd;
+.mytable th, td{
     padding: 5px;
     font-size: 15px;
 }

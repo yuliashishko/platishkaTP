@@ -71,7 +71,7 @@ export class AddInfo extends React.Component {
         axios.get('/api/v1/info/all', config)
             .then(function (response) {
                 console.log(response);
-                if (response.status == 200) {
+                if (response.status === 200) {
                     if (response.data) {
                         const r = response.data;
                         self.setState({
@@ -94,7 +94,11 @@ export class AddInfo extends React.Component {
             text: this.state[this.state.chapter],
         }
         let auth = 'Bearer_' + cookie.get('token');
-        fetch('/api/v1/admin/info/', {
+        let path = "/api/v1/admin/info/";
+        if (this.state.chapter == "news") {
+            path = "/api/v1/info/news"
+        }
+        fetch(path, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

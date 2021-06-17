@@ -52,7 +52,7 @@ export class Users extends React.Component {
                             <td>
                                 <button onClick={() => this.onChangeUser(item)}>Изменить</button>
                             </td>
-                            <td><Button onClick={() => this.onDeleteUser(item.id)} text="Удалить" color="red"/></td>
+                            <td onClick={() => this.onDeleteUser(item.id)}><Button  text="Удалить" color="red"/></td>
                             <td>
                                 <button onClick={() => this.resetPassword(item.id)}>Сбросить пароль</button>
                             </td>
@@ -93,7 +93,7 @@ export class Users extends React.Component {
         axios.post('/api/v1/admin/users/generate_pass', config)
             .then(function (response) {
                 console.log(response);
-                if (response.status == 200) {
+                if (response.status === 200) {
                     console.log(response.data)
                     if (response.data)
                         return response.data.password;
@@ -146,7 +146,7 @@ export class Users extends React.Component {
                 Authorization: `Bearer_${cookies.get('token')}`,
             }
         });
-        this.getData();
+        await this.getData();
     }
 
     async resetPassword(id) {
@@ -161,7 +161,7 @@ export class Users extends React.Component {
                 Authorization: `Bearer_${cookies.get('token')}`,
             }
         });
-        this.getData();
+        await this.getData();
     }
     cancel = () => {
         this.setState({
@@ -180,7 +180,7 @@ export class Users extends React.Component {
         axios.get('/api/v1/admin/users/all', config)
             .then(function (response) {
                 console.log(response);
-                if (response.status == 200) {
+                if (response.status === 200) {
                     if (response.data)
                         self.setState({
                             users: response.data,
@@ -190,18 +190,6 @@ export class Users extends React.Component {
             .catch(function (error) {
                 console.log(error);
             });
-
-
-
-        // const r = await (await fetch('/api/v1/admin/users/all'), {
-        //     headers: {
-        //         'Authorization': `Bearer_${cookies.get('token')}`,
-        //     }
-        // }).json();
-        // console.log(r);
-        // this.setState({
-        //     users: r,
-        // });
     };
 
 }

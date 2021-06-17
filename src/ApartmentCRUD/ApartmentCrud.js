@@ -81,7 +81,7 @@ export class ApartmentCrud extends React.Component {
                             <td>
                                 <button onClick={() => this.onEditApartment(item)}>Изменить</button>
                             </td>
-                            <td><Button onClick={() => this.deleteApartment(item.apartmentId)} text="Удалить"
+                            <td onClick={() => this.deleteApartment(item.apartmentId)}><Button text="Удалить"
                                         color="red"/></td>
                             <td>{item.username ? item.username :
                                 <button onClick={() => this.onUser(item)}>Добавить</button>}</td>

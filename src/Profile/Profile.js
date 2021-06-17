@@ -1,6 +1,6 @@
 import {Page} from "../Page/Page";
 import React from "react";
-import s from "../Home/Home.module.css";
+import s from "./Profile.module.css";
 import {Card} from "../Card/Card";
 import {ProfileIcon} from "../ProfileIcon/ProfileIcon";
 import {ChangePassword} from "./ProfileModals/ChangePassword";
@@ -8,7 +8,9 @@ import {delay} from "../utils";
 import {TelegrammModal} from "./ProfileModals/TelegrammModal";
 import Cookies from "universal-cookie/es6";
 import axios from "axios";
+
 let cookies = new Cookies();
+
 export class Profile extends React.Component {
     constructor() {
         super();
@@ -44,37 +46,36 @@ export class Profile extends React.Component {
     render() {
         let content = (
             <div>
-                <section className={s.table}>
-                    <Card title="Личный кабинет">
-                        <ProfileIcon height={50} width={50}/>
-                    </Card>
-                    <div className={s.row}>
-                        <button onClick={() => this.changePassword()}>Сменить пароль</button>
-                        <button onClick={() => this.getTelegramm()}>Телеграмм бот</button>
+                <section>
+                    <div className={s.card}>
+                        <Card title="Личный кабинет">
+                            <ProfileIcon height={50} width={50}/>
+                        </Card>
                     </div>
-                    <label>Адрес: {this.state.address}</label>
-                    <table>
-                        <tr>
-                            <th>Наименование услуги</th>
-                            <th>Номер счета</th>
-                            <th>Обслуживающая компания</th>
-                        </tr>
-                        <tr>
-                            <td>Газоснабжение</td>
-                            <td> {this.state.gas_number}</td>
-                            <td> {this.state.gas_firm}</td>
-                        </tr>
-                        <tr>
-                            <td>Электричество</td>
-                            <td> {this.state.electro_number}</td>
-                            <td> {this.state.electro_firm}</td>
-                        </tr>
-                        <tr>
-                            <td>Вода</td>
-                            <td> {this.state.water_number}</td>
-                            <td> {this.state.water_firm}</td>
-                        </tr>
-                    </table>
+                    <div className={s.row}>
+                        <button className={s.mybutton} onClick={() => this.changePassword()}>Сменить пароль</button>
+                        <button className={s.mybutton} onClick={() => this.getTelegramm()}>Телеграмм бот</button>
+                    </div>
+                    <div className={s.address}>Адрес: {this.state.address}</div>
+                    <div className={s.tableContainer}>
+                        <table className={s.table}>
+                            <tr>
+                                <td>Газоснабжение</td>
+                                <td>Номер счета: {this.state.gas_number}</td>
+                                <td> {this.state.gas_firm}</td>
+                            </tr>
+                            <tr>
+                                <td>Электричество</td>
+                                <td>Номер счета: {this.state.electro_number}</td>
+                                <td> {this.state.electro_firm}</td>
+                            </tr>
+                            <tr>
+                                <td>Вода</td>
+                                <td>Номер счета: {this.state.water_number}</td>
+                                <td> {this.state.water_firm}</td>
+                            </tr>
+                        </table>
+                    </div>
                 </section>
             </div>
         )
@@ -91,7 +92,6 @@ export class Profile extends React.Component {
     }
 
     async getData() {
-
 
 
         const config = {
@@ -140,6 +140,7 @@ export class Profile extends React.Component {
         //     electro_firm: r.electExecutor,
         // });
     }
+
     getLink = () => {
         return "Иди в телегу"
     }
@@ -198,7 +199,7 @@ export class Profile extends React.Component {
             console.log(r);
             console.log("checked")
             if (r.status === "success") {
-                alert( "Пароль успешно сменен")
+                alert("Пароль успешно сменен")
                 this.setState({
                     modal: null,
                 })

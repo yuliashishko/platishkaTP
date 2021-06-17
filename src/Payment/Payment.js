@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Page} from "../Page/Page";
 import gif from "../TryPay/giphy.gif";
-import chair from "../TryPay/chair.png";
 import Cookies from 'universal-cookie';
 import s from './Payment.module.css'
 import * as cn from "classnames";
@@ -41,7 +40,7 @@ function Product({product}) {
                     };
                     const r = await (await fetch('/api/v1/pay/success', {
                         method: 'POST',
-                        body: JSON.stringify(data),
+                        body: JSON.stringify(val),
                         headers: {
                             'Content-Type': 'application/json;charset=UTF-8'
                         }
@@ -87,7 +86,7 @@ export class Payment extends React.Component {
             currValue: 0,
             tarif: 0,
             stage: 1,
-            isLoggedIn: cookies.get('isLoggedIn'),
+            isLoggedIn: cookies.get('isLoggedIn') === "true",
             pay: null,
         }
     }
@@ -109,8 +108,8 @@ export class Payment extends React.Component {
                                     <button onClick={() => this.typeSelected("gas")}
                                             className={cn(this.state.type === "gas" ? s.blueButtonSelected : s.blueButton)}>Газ
                                     </button>
-                                    <button onClick={() => this.typeSelected("electro")}
-                                            className={cn(this.state.type === "electro" ? s.blueButtonSelected : s.blueButton)}>
+                                    <button onClick={() => this.typeSelected("electricity")}
+                                            className={cn(this.state.type === "electricity" ? s.blueButtonSelected : s.blueButton)}>
                                         Электричество
                                     </button>
                                     <button onClick={() => this.typeSelected("water")}
@@ -141,7 +140,7 @@ export class Payment extends React.Component {
                                     <div className={cn(this.state.stage >= 3 ? s.greenCircle : s.greyCircle)}>3</div>
                                     <h4> Итого к оплате</h4></div>
                                 {this.state.stage === 3 ? <div>
-                                    <table className={s.tableContainer}>
+                                    <table className={s.mytable}>
                                         <tr>
                                             <th width="30%">Последние показания</th>
                                             <th width="30%">Текущие показания</th>
